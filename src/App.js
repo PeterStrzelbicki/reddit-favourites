@@ -1,23 +1,32 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import SubredditForm from './components/SubredditForm';
+import FavouritesList from './components/FavouritesList';
 
 function App() {
+  const [favourites, setFavourites] = useState([]);
+
+  useEffect(() => {
+    const favs = JSON.parse(localStorage.getItem('favourites')) || [];
+    setFavourites(favs);
+  }, []);
+
+  const addFavourite = (postId) => {
+    const newFavourites = favourites.includes(postId) ? favourites.filter(id => id !== postId) : [...favourites, postId];
+    setFavourites(newFavourites);
+    localStorage.setItem('favourites', JSON.stringify(newFavourites));
+  };
+
+  const removeFavourite = (postId) => {
+    const newFavourites = favourites.filter(id => id !== postId);
+    setFavourites(newFavourites);
+    localStorage.setItem('favourites', JSON.stringify(newFavourites));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <SubredditForm addFavourite={addFavourite} />
+      <FavouritesList favourites={favourites} removeFavourite={removeFavourite} />
     </div>
   );
 }
